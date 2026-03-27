@@ -18,7 +18,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 #intro{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:2rem 1.5rem;text-align:center;gap:1.25rem}
 #intro h1{font-size:11px;font-weight:400;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-top:0.5rem}
 #intro p{font-size:19px;font-weight:300;color:var(--text);line-height:1.5;max-width:300px}
-#intro small{font-size:13px;color:var(--text3);line-height:1.8;max-width:280px}
 .name-row{display:flex;flex-direction:column;gap:14px;width:100%;max-width:300px}
 .person-field{display:flex;flex-direction:column;gap:8px;background:var(--surface);border-radius:12px;padding:14px;border:1px solid var(--border)}
 .person-field label{font-size:11px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase}
@@ -153,7 +152,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 <script>
 var mom='',dad='',photos={mom:null,dad:null};
-var history=[],msgCount=0,isWaiting=false,surrenderCount=0,nvcCount=0;
+var chatHistory=[],msgCount=0,isWaiting=false,surrenderCount=0,nvcCount=0;
 var times=['10:14','10:15','10:16','10:17','10:18','10:19','10:20','10:21','10:22','10:23','10:24','10:25'];
 var tIdx=0;
 var SURRENDER=['ok','okay','fine','whatever','you\'re right','never mind','forget it','i give up','doesn\'t matter','sure','alright','i know','sorry','i\'m sorry','enough','stop','i don\'t care','pointless','leave it','drop it','...','…'];
@@ -221,7 +220,7 @@ function callAI(prompt){
   isWaiting=true;
   document.getElementById('send-btn').disabled=true;
   var tid=showTyping();
-  var msgs=history.slice();
+  var msgs=chatHistory.slice();
   if(prompt) msgs=[{role:'user',content:prompt}];
   else if(msgs.length===0) msgs=[{role:'user',content:'Start.'}];
   fetch('/api/chat',{
@@ -235,8 +234,8 @@ function callAI(prompt){
     isWaiting=false;
     document.getElementById('send-btn').disabled=false;
     var text=data.content&&data.content[0]?data.content[0].text:'';
-    if(prompt) history=[{role:'user',content:'Player joined.'},{role:'assistant',content:text}];
-    else history.push({role:'assistant',content:text});
+    if(prompt) chatHistory=[{role:'user',content:'Player joined.'},{role:'assistant',content:text}];
+    else chatHistory.push({role:'assistant',content:text});
     parseMessages(text);
     updateTension();
   })
@@ -354,7 +353,7 @@ function send(){
   inp.style.height='auto';
   msgCount++;
   addYou(text);
-  history.push({role:'user',content:'Player: '+text});
+  chatHistory.push({role:'user',content:'Player: '+text});
   checkWin(text);
   if(!document.getElementById('win-screen').classList.contains('show')){
     setTimeout(function(){callAI(null);},300);
